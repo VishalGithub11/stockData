@@ -9,6 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
+import moment from "moment";
 
 const useStyles = makeStyles({
   head: {
@@ -26,7 +27,7 @@ const Instruments = () => {
   const classes = useStyles();
 
   const fetchData = async () => {
-    const url = ` https://prototype.sbulltech.com/api/v2/instruments`;
+    const url = `https://prototype.sbulltech.com/api/v2/instruments`;
 
     const response = await fetch(url);
     const reader = response.body.getReader();
@@ -47,8 +48,11 @@ const Instruments = () => {
     <div>
       <h2> Instruments </h2>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead className={classes.head} style={{ fontSize: "25px" }}>
+        <Table
+          sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+          aria-label="customized table"
+        >
+          <TableHead className={classes.head}>
             <TableRow>
               <TableCell className={classes.headCell}>Symbol</TableCell>
               <TableCell className={classes.headCell} align="center">
@@ -70,7 +74,11 @@ const Instruments = () => {
                 </TableCell>
                 <TableCell align="center">{data.Name}</TableCell>
                 <TableCell align="center">{data.Sector}</TableCell>
-                <TableCell align="center">{data.Validtill}</TableCell>
+                <TableCell align="center">
+                  {data.Validtill
+                    ? moment(data.Validtill).format("MMMM Do YYYY, h:mm:ss a")
+                    : ""}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
