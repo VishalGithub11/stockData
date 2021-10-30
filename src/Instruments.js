@@ -1,7 +1,29 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
+
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  head: {
+    backgroundColor: "green",
+  },
+  headCell: {
+    fontWeight: 600,
+    fontSize: "1.2rem",
+  },
+});
+
 const Instruments = () => {
   const [data, setData] = useState(null);
+
+  const classes = useStyles();
 
   const fetchData = async () => {
     const url = ` https://prototype.sbulltech.com/api/v2/instruments`;
@@ -21,7 +43,41 @@ const Instruments = () => {
 
   console.log("data", data);
 
-  return <div>Instrument</div>;
+  return (
+    <div>
+      <h2> Instruments </h2>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead className={classes.head} style={{ fontSize: "25px" }}>
+            <TableRow>
+              <TableCell className={classes.headCell}>Symbol</TableCell>
+              <TableCell className={classes.headCell} align="center">
+                Name
+              </TableCell>
+              <TableCell className={classes.headCell} align="center">
+                Service
+              </TableCell>
+              <TableCell className={classes.headCell} align="center">
+                Valid Till
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data?.map((data, i) => (
+              <TableRow key={i}>
+                <TableCell component="th" scope="row">
+                  {data.Symbol}
+                </TableCell>
+                <TableCell align="center">{data.Name}</TableCell>
+                <TableCell align="center">{data.Sector}</TableCell>
+                <TableCell align="center">{data.Validtill}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
 };
 
 export default Instruments;
