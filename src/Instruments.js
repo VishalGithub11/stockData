@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { makeStyles } from "@mui/styles";
 import moment from "moment";
+import TextField from "@mui/material/TextField";
 
 const useStyles = makeStyles({
   head: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles({
 
 const Instruments = () => {
   const [data, setData] = useState(null);
+  const [search, setSearch] = useState("");
 
   const classes = useStyles();
 
@@ -35,23 +37,28 @@ const Instruments = () => {
     const decoder = new TextDecoder("utf-8");
     const csv = decoder.decode(result.value);
     const results = Papa.parse(csv, { header: true });
-    setData(results.data);
+    setData(results.data.filter((item) => item.Symbol !== ""));
   };
 
   useEffect(() => {
     return fetchData();
   }, []);
 
-  console.log("data", data);
-
   return (
     <div>
       <h2> Instruments </h2>
+
+      <TextField
+        label="search name, symbol...."
+        color="success"
+        onChange={(e) => {
+          setSearch(e.target.value);
+        }}
+        size="small"
+      />
+
       <TableContainer component={Paper}>
-        <Table
-          sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-          aria-label="customized table"
-        >
+        <Table sx={{ min: 700 }} aria-label="customized table">
           <TableHead className={classes.head}>
             <TableRow>
               <TableCell className={classes.headCell}>Symbol</TableCell>
@@ -67,20 +74,31 @@ const Instruments = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((data, i) => (
-              <TableRow key={i}>
-                <TableCell component="th" scope="row">
-                  {data.Symbol}
-                </TableCell>
-                <TableCell align="center">{data.Name}</TableCell>
-                <TableCell align="center">{data.Sector}</TableCell>
-                <TableCell align="center">
-                  {data.Validtill
-                    ? moment(data.Validtill).format("MMMM Do YYYY, h:mm:ss a")
-                    : ""}
-                </TableCell>
-              </TableRow>
-            ))}
+            {data
+              ?.filter((val) => {
+                if (search == "") {
+                  return val;
+                } else if (
+                  val.Name.toLowerCase().includes(search.toLowerCase()) ||
+                  val.Symbol.toLowerCase().includes(search.toLowerCase())
+                ) {
+                  return val;
+                }
+              })
+              .map((data, i) => (
+                <TableRow key={i}>
+                  <TableCell component="th" scope="row">
+                    {data.Symbol}
+                  </TableCell>
+                  <TableCell align="center">{data.Name}</TableCell>
+                  <TableCell align="center">{data.Sector}</TableCell>
+                  <TableCell align="center">
+                    {data.Validtill
+                      ? moment(data.Validtill).format("MMMM Do YYYY, h:mm:ss a")
+                      : ""}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
