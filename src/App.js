@@ -9,7 +9,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/" exact component={Instruments} />
-          <Route path="/quotes" component={Quotes} />
+          <Route path="/quotes" exact component={Quotes} />
         </Switch>
       </Router>
     </div>
